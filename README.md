@@ -14,7 +14,7 @@ A comprehensive attendance system using facial recognition with a user-friendly 
 
 ## Requirements
 
-Make sure you have Python 3.x installed. You will need to install the following Python packages:
+Make sure you have a folder named ImagesAttendance in the project directory. This folder should contain images of individuals to be recognized, with each image named as the individual's name (e.g., John_Doe.jpg).Also you have Python 3.x installed. You will need to install the following Python packages:
 
 - OpenCV: `pip install opencv-python`
 - face_recognition: `pip install face_recognition`
