@@ -10,6 +10,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
 import csv
+import sys
 
 # Initialize Database
 def init_db():
@@ -229,6 +230,67 @@ def login():
     else:
         messagebox.showerror("Login Failed", "Incorrect username or password.")
 
+# Function to Add New Student
+def add_new_student():
+    def capture_image():
+        name = entry_name.get().strip()
+        if not name:
+            messagebox.showwarning("Input Error", "Please enter the student's name.")
+            return
+        
+        # Ensure the ImagesAttendance directory exists
+        if not os.path.exists('ImagesAttendance'):
+            os.makedirs('ImagesAttendance')
+
+        # Capture image from webcam
+        ret, frame = cap.read()
+        if ret:
+            img_path = f'ImagesAttendance/{name}.jpg'
+            cv2.imwrite(img_path, frame)
+            messagebox.showinfo("Success", f"Image saved as {img_path}.")
+            new_student_window.destroy()
+        else:
+            messagebox.showerror("Capture Error", "Failed to capture image.")
+    
+    def start_camera():
+        global cap
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            messagebox.showerror("Error", "Could not open webcam.")
+            return
+
+        def update_frame():
+            ret, frame = cap.read()
+            if ret:
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(img)
+                imgtk = ImageTk.PhotoImage(image=img)
+                lbl_camera.imgtk = imgtk
+                lbl_camera.configure(image=imgtk)
+            lbl_camera.after(10, update_frame)
+
+        lbl_camera.after(10, update_frame)
+
+    # New window for adding student
+    new_student_window = tk.Toplevel(root)
+    new_student_window.title("Add New Student")
+    new_student_window.geometry("800x800")
+    
+    lbl_camera = tk.Label(new_student_window)
+    lbl_camera.pack(pady=10)
+
+    tk.Label(new_student_window, text="Enter Student Name:", font=("Arial", 14)).pack(pady=10)
+    entry_name = tk.Entry(new_student_window, font=("Arial", 14))
+    entry_name.pack(pady=10)
+
+    tk.Button(new_student_window, text="Add Student", command=capture_image, font=("Arial", 14)).pack(pady=10)
+
+    # Start the camera
+    start_camera()
+
+    new_student_window.protocol("WM_DELETE_WINDOW", lambda: [cap.release(), new_student_window.destroy()])
+
+
 # Main GUI Setup
 root = tk.Tk()
 root.title("Attendance System")
@@ -251,6 +313,9 @@ lbl_title = tk.Label(frame_top, text="Attendance System", font=("Arial", 24, 'bo
 lbl_title.pack(pady=10)
 
 # Left Frame Widgets
+btn_add_student = tk.Button(frame_left, text="Add New Student", command=add_new_student, width=20, font=("Arial", 12, 'bold'))
+btn_add_student.pack(pady=10)
+
 btn_start = tk.Button(frame_left, text="Start Attendance", command=start_attendance, width=20, font=("Arial", 12, 'bold'))
 btn_start.pack(pady=10)
 
@@ -276,8 +341,10 @@ lbl_video.pack(fill=tk.BOTH, expand=True)
 # Login GUI Setup
 login_window = tk.Toplevel(root)
 login_window.title("Login")
-login_window.geometry("400x400")
+login_window.geometry("600x500")
 login_window.configure(bg='lightgrey')
+
+
 
 lbl_login_title = tk.Label(login_window, text="Admin Login", font=("Arial", 18, 'bold'), bg='lightgrey')
 lbl_login_title.pack(pady=10)
