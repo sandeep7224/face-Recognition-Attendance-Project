@@ -6,6 +6,7 @@ A comprehensive attendance system using facial recognition with a user-friendly 
 - **Facial Recognition**: Automatically marks attendance by recognizing faces.
 - **User Authentication**: Admin login system to prevent unauthorized access.
 - **Data Storage**: Stores attendance records in an SQLite database.
+- **Add Student**: We can add new student to the database with its image.
 - **View Attendance**: View attendance records through a GUI table.
 - **Export to CSV**: Export attendance records to a CSV file.
 - **Visualize Data**: Visualize attendance data over time using matplotlib.
